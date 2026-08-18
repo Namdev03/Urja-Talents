@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express"
 const server = express();
 
-
 //=====Middelwares=====
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
