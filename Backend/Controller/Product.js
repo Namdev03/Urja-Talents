@@ -1,5 +1,9 @@
-
-
+/**
+ * @route get route/api/search?q=book&brand=goverment&minPrice=1000
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 export const getProduct = async (req, res) => {
     try {
         const {
@@ -44,7 +48,6 @@ export const getProduct = async (req, res) => {
 
         let sortOption = SORT_OPTIONS[sort] || SORT_OPTIONS.newest;
         if (bestSellers === "true") sortOption = SORT_OPTIONS.best_selling;
-
         const pageNum = Math.max(Number(page), 1);
         const limitNum = Math.max(Number(limit), 1);
         const skip = (pageNum - 1) * limitNum;
@@ -58,7 +61,18 @@ export const getProduct = async (req, res) => {
                 .limit(limitNum),
             Product.countDocuments(filter),
         ]);
-        
+        const filtered = minDiscount
+            ? products.filter((p) => p.discountPercent >= Number(minDiscount))
+            : products;
+        return successResponse(res, 200, "Products fetched successfully", {
+            products: filtered,
+            pagination: {
+                total,
+                page: pageNum,
+                limit: limitNum,
+                totalPages: Math.ceil(total / limitNum),
+            },
+        });
     } catch (error) {
 
     }
